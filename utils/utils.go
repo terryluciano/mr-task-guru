@@ -19,9 +19,9 @@ const (
 
 type Task struct {
 	ID       string
-	Name     string `json:"name"`
-	Category string `json:"category"`
-	Minutes  int    `json:"minutes"`
+	Name     string
+	Category string
+	Minutes  int
 	Status   Status
 	Date     time.Time
 }
@@ -66,7 +66,6 @@ func AddTask(task Task) error {
 	taskId := strconv.Itoa(int(currentTime)) + "-" + randomNumber.String()
 
 	task.ID = taskId
-	task.Status = Inactive
 	task.Date = time.Now()
 
 	storedTasks[taskId] = task
@@ -76,8 +75,13 @@ func AddTask(task Task) error {
 	return nil
 }
 
-func RemoveTask() {
+func RemoveTask(id string) error {
+	if _, ok := storedTasks[id]; !ok {
+		return fmt.Errorf("task with id %s not found", id)
+	}
 
+	delete(storedTasks, id)
+	return nil
 }
 
 func GetTask(id string) map[string]interface{} {
@@ -97,6 +101,31 @@ func GetAllTask() map[string]interface{} {
 	return formattedTasks
 }
 
-func UpdateTask() {
+func UpdateTask(id string, name *string, minutes *int, category *string, status *Status) error {
+	if _, ok := storedTasks[id]; !ok {
+		return fmt.Errorf("task with id %s not found", id)
+	}
 
+	task := storedTasks[id]
+
+	if status != nil {
+		if *status < 0 || *status > 3 {
+			return fmt.Errorf("invalid status")
+		}
+		task.Status = *status
+	}
+
+	if name != nil {
+		task.Name = *name
+	}
+
+	if minutes != nil {
+		task.Minutes = *minutes
+	}
+
+	if category != nil {
+		task.Category = *category
+	}
+	storedTasks[id] = task
+	return nil
 }

@@ -7,12 +7,6 @@ import (
 	utils "github.com/terryluciano/mr-task-guru/utils"
 )
 
-func PingHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
-}
-
 func AddTaskHandler(c *gin.Context) {
 
 	var newTask utils.Task
@@ -27,7 +21,7 @@ func AddTaskHandler(c *gin.Context) {
 	err := utils.AddTask(newTask)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "Failed to add new task",
+			"msg": err.Error(),
 		})
 		return
 	}
@@ -35,6 +29,7 @@ func AddTaskHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "success",
 	})
+	return
 }
 
 // task id is in the param
@@ -43,7 +38,7 @@ func RemoveTaskHandler(c *gin.Context) {
 	id := c.Param("id")
 	if err := utils.RemoveTask(id); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "Cannot Find Task",
+			"msg": err.Error(),
 		})
 		return
 	} else {
@@ -56,7 +51,7 @@ func RemoveTaskHandler(c *gin.Context) {
 }
 
 // will take either status, name, category, and/or minutes, but needs to pass an id
-func UpdateTask(c *gin.Context) {
+func UpdateTaskHandler(c *gin.Context) {
 	id := c.Param("id")
 
 	type UpdateTaskRequest struct {
@@ -77,7 +72,7 @@ func UpdateTask(c *gin.Context) {
 	err := utils.UpdateTask(id, task.Name, task.Minutes, task.Category, task.Status)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "Failed to update task",
+			"msg": err.Error(),
 		})
 		return
 	}
@@ -85,8 +80,26 @@ func UpdateTask(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "Successfully Updated Task",
 	})
+	return
+}
+
+func GetTaskHandler(c *gin.Context) {
+	id := c.Param("id")
+
+	task, err := utils.GetTask(id)
+	if err != nil {
+		c.JSON(http.StatusFound, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, task)
+		return
+	}
+
 }
 
 func GetAllTasksHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.GetAllTask())
+	return
 }

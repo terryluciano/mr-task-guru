@@ -36,6 +36,13 @@ func RemoveCategory(id string) error {
 
 	delete(storedCategories, id)
 
+	for taskID, t := range storedTasks {
+		if t.Category == id {
+			t.Category = ""
+			storedTasks[taskID] = t
+		}
+	}
+
 	return nil
 }
 

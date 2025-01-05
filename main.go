@@ -8,7 +8,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	// Tasks
+	// Tasks router
 	tasks := router.Group("/task")
 	{
 		tasks.POST("/add", handlers.AddTaskHandler)
@@ -18,11 +18,13 @@ func main() {
 		tasks.PUT("/update/:id", handlers.UpdateTaskHandler)
 	}
 
-	// Categories router
+	// Category router
 	category := router.Group("/category")
 	{
 		category.POST("/add/:category", handlers.AddCategoryHandler)
 		category.DELETE("/remove/:id", handlers.RemoveCategoryHandler)
+		category.GET("/:id", handlers.GetCategoryHandler)
+		category.GET("/all", handlers.GetAllCategoriesHandler)
 	}
 
 	router.Run(":4000")

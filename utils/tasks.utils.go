@@ -57,6 +57,12 @@ func AddTask(task Task) error {
 		return err
 	} else {
 
+		if task.Category != "" {
+			if ok := DoesCategoryExists(task.Category); !ok {
+				return fmt.Errorf("Provided task category does not exists")
+			}
+		}
+
 		task.ID = taskId
 		task.Date = time.Now()
 
@@ -99,12 +105,20 @@ func UpdateTask(id string, name *string, minutes *int, category *string, status 
 		return fmt.Errorf("Task with id %s not found", id)
 	}
 
+	if status != nil && (*status < 0 || *status > 3) {
+		return fmt.Errorf("Invalid status")
+	}
+
 	task := storedTasks[id]
 
-	if status != nil {
-		if *status < 0 || *status > 3 {
-			return fmt.Errorf("Invalid status")
+	if category != nil {
+		if ok := DoesCategoryExists(*category); !ok && *category != "" {
+			return fmt.Errorf("New task category does not exists")
 		}
+		task.Category = *category
+	}
+
+	if status != nil {
 		task.Status = *status
 	}
 
@@ -116,9 +130,6 @@ func UpdateTask(id string, name *string, minutes *int, category *string, status 
 		task.Minutes = *minutes
 	}
 
-	if category != nil {
-		task.Category = *category
-	}
 	storedTasks[id] = task
 	return nil
 }

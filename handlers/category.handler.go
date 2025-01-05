@@ -10,18 +10,18 @@ import (
 func AddCategoryHandler(c *gin.Context) {
 	newCategory := c.Param("category")
 
-	err := utils.AddCategory(newCategory)
-	if err != nil {
+	if newCategory, err := utils.AddCategory(newCategory); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
 		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "Successfully Added a New Category",
+			"data": newCategory,
+		})
+		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "Successfully Added a New Category",
-	})
-	return
 }
 
 func RemoveCategoryHandler(c *gin.Context) {
@@ -38,4 +38,22 @@ func RemoveCategoryHandler(c *gin.Context) {
 		"msg": "Successfully Removed Category",
 	})
 	return
+}
+
+func GetCategoryHandler(c *gin.Context) {
+	id := c.Param("id")
+
+	if category, err := utils.GetCategory(id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, category)
+		return
+	}
+}
+
+func GetAllCategoriesHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, utils.GetAllCategories())
 }

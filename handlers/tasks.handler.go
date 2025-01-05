@@ -27,7 +27,7 @@ func AddTaskHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"msg": "success",
+		"msg": "Successfully Added Task",
 	})
 	return
 }

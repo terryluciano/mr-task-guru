@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	handlers "github.com/terryluciano/mr-task-guru/handlers"
-	"github.com/terryluciano/mr-task-guru/pg"
+	pg "github.com/terryluciano/mr-task-guru/pg"
 )
 
 func main() {

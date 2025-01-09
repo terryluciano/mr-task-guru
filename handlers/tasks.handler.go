@@ -4,21 +4,30 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/terryluciano/mr-task-guru/model"
+	"github.com/terryluciano/mr-task-guru/pg"
 	utils "github.com/terryluciano/mr-task-guru/utils"
 )
 
 func AddTaskHandler(c *gin.Context) {
 
-	var newTask utils.Task
+	type newTask struct {
+		Name           string  `json:"name"`
+		Category       *int    `json:"category"`
+		Minutes        *int    `json:"minutes"`
+		Current_status *string `json:"current_status"`
+	}
 
-	if err := c.BindJSON(&newTask); err != nil {
+	var input model.Task
+
+	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "Missing required information for new task",
 		})
 		return
 	}
 
-	err := utils.AddTask(newTask)
+	err := pg.InsertTask(&input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
@@ -100,6 +109,14 @@ func GetTaskHandler(c *gin.Context) {
 }
 
 func GetAllTasksHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, utils.GetAllTask())
+	tasks, err := pg.SelectAllTasks()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": tasks})
 	return
 }

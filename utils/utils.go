@@ -4,9 +4,11 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
+	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -27,4 +29,15 @@ func GenerateRandomID() (string, error) {
 
 	return newID, nil
 
+}
+
+func ConvertIdToInt(c *gin.Context, id string) (*int, error) {
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "ID must be a number",
+		})
+		return nil, fmt.Errorf("ID must be a number")
+	}
+	return &intID, nil
 }

@@ -1,4 +1,4 @@
-package pg
+package db
 
 import (
 	"context"
@@ -11,14 +11,14 @@ type postgres struct {
 	db *pgx.Conn
 }
 
-var pgConn *postgres
+var conn *postgres
 
 func Connect(ctx context.Context, connString string) {
 	db, err := pgx.Connect(ctx, connString)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	} else {
-		pgConn = &postgres{db}
+		conn = &postgres{db}
 		log.Println("Connected to Database...")
 	}
 }

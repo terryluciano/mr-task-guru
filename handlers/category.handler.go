@@ -4,13 +4,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	utils "github.com/terryluciano/mr-task-guru/utils"
+	"github.com/terryluciano/mr-task-guru/db"
+	"github.com/terryluciano/mr-task-guru/utils"
 )
 
 func AddCategoryHandler(c *gin.Context) {
-	newCategory := c.Param("category")
+	category := c.Param("category")
 
-	if newCategory, err := utils.AddCategory(newCategory); err != nil {
+	if newCategory, err := db.InsertCategory(category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
@@ -18,7 +19,7 @@ func AddCategoryHandler(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"msg":  "Successfully Added a New Category",
-			"data": newCategory,
+			"data": *newCategory,
 		})
 		return
 	}
@@ -27,7 +28,12 @@ func AddCategoryHandler(c *gin.Context) {
 func RemoveCategoryHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	if err := utils.RemoveCategory(id); err != nil {
+	inputID, err := utils.ConvertIdToInt(c, id)
+	if err != nil {
+		return
+	}
+
+	if err := db.RemoveCategory(*inputID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
@@ -43,17 +49,31 @@ func RemoveCategoryHandler(c *gin.Context) {
 func GetCategoryHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	if category, err := utils.GetCategory(id); err != nil {
+	inputID, err := utils.ConvertIdToInt(c, id)
+	if err != nil {
+		return
+	}
+
+	if category, err := db.SelectCategory(*inputID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
 		return
 	} else {
-		c.JSON(http.StatusOK, category)
+		c.JSON(http.StatusOK, *category)
 		return
 	}
 }
 
 func GetAllCategoriesHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, utils.GetAllCategories())
+	categories, err := db.SelectAllCategories()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": categories})
+	return
 }

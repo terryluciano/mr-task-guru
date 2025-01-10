@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/terryluciano/mr-task-guru/db"
 	"github.com/terryluciano/mr-task-guru/model"
-	"github.com/terryluciano/mr-task-guru/pg"
-	utils "github.com/terryluciano/mr-task-guru/utils"
+	"github.com/terryluciano/mr-task-guru/utils"
 )
 
 func AddTaskHandler(c *gin.Context) {
@@ -27,7 +27,7 @@ func AddTaskHandler(c *gin.Context) {
 		return
 	}
 
-	err := pg.InsertTask(&input)
+	err := db.InsertTask(&input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
@@ -45,7 +45,13 @@ func AddTaskHandler(c *gin.Context) {
 func RemoveTaskHandler(c *gin.Context) {
 
 	id := c.Param("id")
-	if err := utils.RemoveTask(id); err != nil {
+
+	intID, err := utils.ConvertIdToInt(c, id)
+	if err != nil {
+		return
+	}
+
+	if err := db.RemoveTask(*intID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
@@ -63,14 +69,7 @@ func RemoveTaskHandler(c *gin.Context) {
 func UpdateTaskHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	type UpdateTaskRequest struct {
-		Name     *string       `json:"name"`
-		Minutes  *int          `json:"minutes"`
-		Category *string       `json:"category"`
-		Status   *utils.Status `json:"status"`
-	}
-
-	var task UpdateTaskRequest
+	var task model.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "Invalid Request",
@@ -78,10 +77,15 @@ func UpdateTaskHandler(c *gin.Context) {
 		return
 	}
 
-	err := utils.UpdateTask(id, task.Name, task.Minutes, task.Category, task.Status)
+	intID, err := utils.ConvertIdToInt(c, id)
 	if err != nil {
+		return
+	}
+
+	updateErr := db.UpdateTask(*intID, task)
+	if updateErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
+			"msg": updateErr.Error(),
 		})
 		return
 	}
@@ -95,21 +99,26 @@ func UpdateTaskHandler(c *gin.Context) {
 func GetTaskHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	task, err := utils.GetTask(id)
+	intID, err := utils.ConvertIdToInt(c, id)
 	if err != nil {
-		c.JSON(http.StatusFound, gin.H{
+		return
+	}
+
+	task, err := db.SelectTask(*intID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),
 		})
 		return
 	} else {
-		c.JSON(http.StatusOK, task)
+		c.JSON(http.StatusOK, *task)
 		return
 	}
 
 }
 
 func GetAllTasksHandler(c *gin.Context) {
-	tasks, err := pg.SelectAllTasks()
+	tasks, err := db.SelectAllTasks()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg": err.Error(),

@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/terryluciano/mr-task-guru/db"
 	handlers "github.com/terryluciano/mr-task-guru/handlers"
-	pg "github.com/terryluciano/mr-task-guru/pg"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 
 	db_url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", postgres_user, postgres_password, postgres_host, postgres_port, postgres_db)
 
-	pg.Connect(context.Background(), db_url)
+	db.Connect(context.Background(), db_url)
 
 	router := gin.Default()
 

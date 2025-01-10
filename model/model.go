@@ -13,3 +13,10 @@ type Task struct {
 	Deleted        *bool     `db:"deleted" json:"deleted"`
 	Timestamp      time.Time `db:"timestamp" json:"timestamp"`
 }
+
+type Category struct {
+	ID        int       `db:"id" json:"id"`
+	Name      string    `db:"name" json:"name"`
+	Deleted   *bool     `db:"deleted" json:"deleted"`
+	Timestamp time.Time `db:"timestamp" json:"timestamp"`
+}

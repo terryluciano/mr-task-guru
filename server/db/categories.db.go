@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/terryluciano/mr-task-guru/model"
+	"github.com/terryluciano/mr-task-guru/server/model"
 )
 
 func InsertCategory(category string) (*model.Category, error) {

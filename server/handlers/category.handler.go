@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/terryluciano/mr-task-guru/db"
-	"github.com/terryluciano/mr-task-guru/utils"
+	"github.com/terryluciano/mr-task-guru/server/db"
+	"github.com/terryluciano/mr-task-guru/server/utils"
 )
 
 func AddCategoryHandler(c *gin.Context) {

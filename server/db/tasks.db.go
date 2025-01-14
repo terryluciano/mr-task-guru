@@ -9,7 +9,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/terryluciano/mr-task-guru/model"
+	"github.com/terryluciano/mr-task-guru/server/model"
 )
 
 func InsertTask(task *model.Task) error {

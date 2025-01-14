@@ -1,4 +1,4 @@
-module github.com/terryluciano/mr-task-guru
+module github.com/terryluciano/mr-task-guru/server
 
 go 1.23.4
 

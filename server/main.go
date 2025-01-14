@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/terryluciano/mr-task-guru/db"
-	handlers "github.com/terryluciano/mr-task-guru/handlers"
+	"github.com/terryluciano/mr-task-guru/server/db"
+	handlers "github.com/terryluciano/mr-task-guru/server/handlers"
 )
 
 func main() {

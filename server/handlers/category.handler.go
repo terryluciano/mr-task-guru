@@ -9,9 +9,21 @@ import (
 )
 
 func AddCategoryHandler(c *gin.Context) {
-	category := c.Param("category")
+	type newCategory struct {
+		Name  string  `json:"name"`
+		Color *string `json:"color"`
+	}
 
-	if newCategory, err := db.InsertCategory(category); err != nil {
+	var input newCategory
+
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "Missing required information for new category",
+		})
+		return
+	}
+
+	if newCategory, err := db.InsertCategory(input.Name, input.Color); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})

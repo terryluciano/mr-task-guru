@@ -19,4 +19,5 @@ type Category struct {
 	Name      string    `db:"name" json:"name"`
 	Deleted   *bool     `db:"deleted" json:"deleted"`
 	Timestamp time.Time `db:"timestamp" json:"timestamp"`
+	Color     *string   `db:"color" json:"color"`
 }

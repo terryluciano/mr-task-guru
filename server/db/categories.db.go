@@ -10,12 +10,12 @@ import (
 	"github.com/terryluciano/mr-task-guru/server/model"
 )
 
-func InsertCategory(category string) (*model.Category, error) {
+func InsertCategory(category string, color *string) (*model.Category, error) {
 	var newCategory model.Category
 
-	row := conn.db.QueryRow(context.Background(), `INSERT INTO categories (name) VALUES ($1) RETURNING *`, category)
+	row := conn.db.QueryRow(context.Background(), `INSERT INTO categories (name, color) VALUES ($1, $2) RETURNING *`, category, color)
 
-	if err := row.Scan(&newCategory.ID, &newCategory.Name, &newCategory.Deleted, &newCategory.Timestamp); err != nil {
+	if err := row.Scan(&newCategory.ID, &newCategory.Name, &newCategory.Deleted, &newCategory.Timestamp, &newCategory.Color); err != nil {
 		return nil, err
 	}
 	return &newCategory, nil
@@ -32,7 +32,7 @@ func SelectCategory(id int) (*model.Category, error) {
 
 	row := conn.db.QueryRow(context.Background(), `SELECT * FROM categories WHERE id=$1`, id)
 
-	switch err := row.Scan(&category.ID, &category.Name, &category.Deleted, &category.Timestamp); err {
+	switch err := row.Scan(&category.ID, &category.Name, &category.Deleted, &category.Timestamp, &category.Color); err {
 	case sql.ErrNoRows:
 		log.Println(err.Error())
 		return nil, fmt.Errorf("Category does not exist")

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/terryluciano/mr-task-guru/server/db"
@@ -32,6 +33,12 @@ func main() {
 	db.Connect(context.Background(), db_url)
 
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+
+	router.Use(cors.New(config))
 
 	// Tasks router
 	tasks := router.Group("/task")

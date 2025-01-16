@@ -1,0 +1,1 @@
+export const API = import.meta.env.PROD ? '' : 'http://localhost:4000'

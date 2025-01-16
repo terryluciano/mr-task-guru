@@ -4,6 +4,7 @@ export default {
   theme: {
     fontFamily: {
       FunnelSans: ["Funnel Sans", "sans-serif"],
+      Roboto: ["Roboto", "sans-serif"]
     },
     extend: {},
   },

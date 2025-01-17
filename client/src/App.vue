@@ -5,50 +5,16 @@ import TaskColumn from './components/tasks/TaskColumn.vue'
 import type { Category, Task } from './constants/types'
 import { getAllTasks } from './api/tasks.api'
 import { getAllCategories } from './api/categories.api'
+import { useTaskStore } from './store'
 
-const tasks = ref<Task[]>([])
+const taskStore = useTaskStore()
+
 const categories = ref<Category[]>([])
 
-interface SortTasks {
-    inactive: Task[]
-    active: Task[]
-    complete: Task[]
-    incomplete: Task[]
-}
-
-const sortedTasks = computed<SortTasks>(() => {
-    const sorted: SortTasks = {
-        inactive: [],
-        active: [],
-        complete: [],
-        incomplete: [],
-    }
-
-    if (tasks.value.length == 0) {
-        return sorted
-    } else {
-        tasks.value.forEach((task) => {
-            switch (task.current_status) {
-                case 'active':
-                    sorted.active.push(task)
-                    break
-                case 'complete':
-                    sorted.complete.push(task)
-                    break
-                case 'incomplete':
-                    sorted.incomplete.push(task)
-                    break
-                default:
-                    sorted.inactive.push(task)
-                    break
-            }
-        })
-        return sorted
-    }
-})
-
 onMounted(async () => {
-    tasks.value = await getAllTasks()
+    const tasks = await getAllTasks()
+    taskStore.setTasks(tasks)
+
     categories.value = await getAllCategories()
 })
 
@@ -64,25 +30,25 @@ watchEffect(() => {
             <TaskColumn
                 title="Inactive"
                 status="inactive"
-                :tasks="sortedTasks.inactive"
+                :tasks="taskStore.sortedTasks.inactive"
                 :categories="categories"
             />
             <TaskColumn
                 title="Active"
                 status="active"
-                :tasks="sortedTasks.active"
+                :tasks="taskStore.sortedTasks.active"
                 :categories="categories"
             />
             <TaskColumn
                 title="Complete"
                 status="complete"
-                :tasks="sortedTasks.complete"
+                :tasks="taskStore.sortedTasks.complete"
                 :categories="categories"
             />
             <TaskColumn
                 title="Incomplete"
                 status="incomplete"
-                :tasks="sortedTasks.incomplete"
+                :tasks="taskStore.sortedTasks.incomplete"
                 :categories="categories"
             />
         </div>

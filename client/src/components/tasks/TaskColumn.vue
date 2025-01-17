@@ -26,7 +26,7 @@ const props = defineProps<Props>()
         class="flex flex-col gap-0 min-w-80 border border-black/15 rounded-md h-full"
     >
         <div
-            class="w-full h-12 text-xl flex items-center flex-row px-4 rounded-t-md border-b border-b-black/15 font-Roboto"
+            class="w-full h-12 text-xl flex items-center flex-row px-4 rounded-t-[5px] font-Roboto"
             :style="{ backgroundColor: statusColorMap[props.status] }"
         >
             {{ props.title }}

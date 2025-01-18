@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref } from 'vue'
 import NavBar from './components/NavBar.vue'
 import TaskColumn from './components/tasks/TaskColumn.vue'
-import type { Category, Task } from './constants/types'
+import type { Category } from './constants/types'
 import { getAllTasks } from './api/tasks.api'
 import { getAllCategories } from './api/categories.api'
 import { useTaskStore } from './store'

@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { useTaskStore } from '../store'
-
-const taskStore = useTaskStore()
-
 const props = defineProps<{
     show: boolean
     title: string

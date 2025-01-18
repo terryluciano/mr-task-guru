@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 import type { Category, Task } from '../../constants/types'
 import pencilIcon from '../../assets/pencil.svg'
 import deleteIcon from '../../assets/delete.svg'
@@ -33,10 +33,6 @@ const category = computed<Category | undefined>(() => {
         return category ? category : undefined
     }
 })
-
-watchEffect(() => {
-    console.log(deleteModal.value)
-})
 </script>
 
 <template>
@@ -63,20 +59,88 @@ watchEffect(() => {
             </p>
         </div>
 
+        <!-- Timestamp -->
+        <p class="text-xs leading-none">
+            {{ new Date(task.timestamp).toLocaleString() }}
+        </p>
+
         <!-- Change Status -->
-        <!-- Add row of  buttons to change status of task-->
+        <div
+            class="flex flex-row justify-center items-center gap-1 w-full h-auto mt-2"
+        >
+            <button
+                v-show="
+                    props.task.current_status != 'inactive' &&
+                    props.task.current_status != null &&
+                    props.task.current_status != undefined
+                "
+                @click="
+                    () => {
+                        taskStore.handleUpdateTask(props.task.id, {
+                            ...props.task,
+                            current_status: 'inactive',
+                        })
+                    }
+                "
+                class="bg-inactive w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
+            >
+                Inactive
+            </button>
+            <button
+                v-show="props.task.current_status != 'active'"
+                @click="
+                    () => {
+                        taskStore.handleUpdateTask(props.task.id, {
+                            ...props.task,
+                            current_status: 'active',
+                        })
+                    }
+                "
+                class="bg-active w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
+            >
+                Active
+            </button>
+            <button
+                v-show="props.task.current_status != 'complete'"
+                @click="
+                    () => {
+                        taskStore.handleUpdateTask(props.task.id, {
+                            ...props.task,
+                            current_status: 'complete',
+                        })
+                    }
+                "
+                class="bg-complete w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
+            >
+                Complete
+            </button>
+            <button
+                v-show="props.task.current_status != 'incomplete'"
+                @click="
+                    () => {
+                        taskStore.handleUpdateTask(props.task.id, {
+                            ...props.task,
+                            current_status: 'incomplete',
+                        })
+                    }
+                "
+                class="bg-incomplete w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
+            >
+                Incomplete
+            </button>
+        </div>
 
         <!-- Add pencil button to change details of task-->
         <div
             class="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-200"
         >
             <button
-                class="bg-slate-200 border rounded size-8 flex items-center justify-center"
+                class="bg-slate-200 hover:bg-slate-300 transition-all duration-100 border rounded size-8 flex items-center justify-center"
             >
                 <img :src="pencilIcon" alt="pencil icon" class="size-6" />
             </button>
             <button
-                class="bg-red-200 border rounded size-8 flex items-center justify-center"
+                class="bg-red-200 hover:bg-red-300 transition-all duration-100 border rounded size-8 flex items-center justify-center"
                 @click="
                     () => {
                         deleteModal = true
@@ -86,11 +150,6 @@ watchEffect(() => {
                 <img :src="deleteIcon" alt="pencil icon" class="size-6" />
             </button>
         </div>
-
-        <!-- Timestamp -->
-        <p class="text-xs leading-none">
-            {{ new Date(task.timestamp).toLocaleString() }}
-        </p>
 
         <DeleteModal
             title="Delete Task"

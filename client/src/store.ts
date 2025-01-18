@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { Task } from './constants/types'
-import { deleteTask } from './api/tasks.api'
+import { deleteTask, updateTask } from './api/tasks.api'
 
 interface SortedTasks {
     inactive: Task[]
@@ -58,10 +58,27 @@ export const useTaskStore = defineStore('task', () => {
         }
     }
 
+    const handleUpdateTask = async (id: number, task: Task) => {
+        try {
+            const res = await updateTask(id, task)
+            if (res) {
+                tasks.value = tasks.value.map((prevTask) => {
+                    if (prevTask.id === id) {
+                        return task
+                    }
+                    return prevTask
+                })
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     return {
         tasks,
         sortedTasks,
         setTasks,
         handleDeleteTask,
+        handleUpdateTask,
     }
 })

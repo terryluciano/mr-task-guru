@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import NavBar from './components/NavBar.vue'
-import TaskColumn from './components/tasks/TaskColumn.vue'
-import type { Category } from './constants/types'
-import { getAllTasks } from './api/tasks.api'
-import { getAllCategories } from './api/categories.api'
-import { useTaskStore } from './store'
-import addTaskIcon from './assets/add-task.svg'
-import categoryIcon from './assets/category.svg'
+import { onMounted, ref } from 'vue';
+import NavBar from './components/NavBar.vue';
+import TaskColumn from './components/tasks/TaskColumn.vue';
+import { getAllTasks } from './api/tasks.api';
+import { getAllCategories } from './api/categories.api';
+import { useTaskStore } from './store/task.store';
+import addTaskIcon from './assets/add-task.svg';
+import categoryIcon from './assets/category.svg';
+import { useCategoryStore } from './store/category.store';
+import AddTaskModal from './components/tasks/AddTaskModal.vue';
 
-const taskStore = useTaskStore()
+const taskStore = useTaskStore();
+const categoryStore = useCategoryStore();
 
-const categories = ref<Category[]>([])
+const showAddTaskModal = ref(false);
 
 onMounted(async () => {
-    const tasks = await getAllTasks()
-    taskStore.setTasks(tasks)
+    taskStore.refetchTasks();
 
-    categories.value = await getAllCategories()
-})
+    const categories = await getAllCategories();
+    categoryStore.setCategories(categories);
+});
 </script>
 
 <template>
@@ -30,6 +32,7 @@ onMounted(async () => {
             >
                 <button
                     class="h-10 rounded-full border-2 border-black px-4 flex flex-row items-center justify-center gap-1 bg-active/25 hover:bg-active/40 transition-all ease-linear duration-[50ms] active:scale-[0.975]"
+                    @click="showAddTaskModal = true"
                 >
                     <img :src="addTaskIcon" alt="" class="size-5" />
                     <p>Add Task</p>
@@ -46,28 +49,28 @@ onMounted(async () => {
                     title="Inactive"
                     status="inactive"
                     :tasks="taskStore.sortedTasks.inactive"
-                    :categories="categories"
                 />
                 <TaskColumn
                     title="Active"
                     status="active"
                     :tasks="taskStore.sortedTasks.active"
-                    :categories="categories"
                 />
                 <TaskColumn
                     title="Complete"
                     status="complete"
                     :tasks="taskStore.sortedTasks.complete"
-                    :categories="categories"
                 />
                 <TaskColumn
                     title="Incomplete"
                     status="incomplete"
                     :tasks="taskStore.sortedTasks.incomplete"
-                    :categories="categories"
                 />
             </div>
         </div>
+        <AddTaskModal
+            :show="showAddTaskModal"
+            @closeAddTaskModel="showAddTaskModal = false"
+        />
     </div>
 </template>
 
@@ -82,5 +85,30 @@ html {
 body {
     margin: 0;
     padding: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: all 0.2s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+    transform: translateY(100%);
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+    transform: translateY(0%);
 }
 </style>

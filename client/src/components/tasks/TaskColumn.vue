@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Category, Task } from '../../constants/types'
 import TaskCard from './TaskCard.vue'
-import { TransitionGroup } from 'vue'
 import gsap from 'gsap'
 
 type statusType = 'inactive' | 'active' | 'complete' | 'incomplete'
@@ -10,7 +9,6 @@ interface Props {
     title: string
     status: statusType
     tasks?: Task[]
-    categories?: Category[]
 }
 
 const statusColorMap: Record<statusType, string> = {
@@ -74,7 +72,6 @@ function onLeave(el: Element, done: () => void) {
                 v-for="(task, index) in props.tasks"
                 :key="task.id"
                 :task="task"
-                :categories="props.categories"
                 :data-index="index"
             />
         </TransitionGroup>

@@ -1,38 +1,40 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import type { Category, Task } from '../../constants/types'
-import pencilIcon from '../../assets/pencil.svg'
-import deleteIcon from '../../assets/delete.svg'
-import { useTaskStore } from '../../store'
-import DeleteModal from '../DeleteModal.vue'
+import { computed, ref } from 'vue';
+import type { Category, Task } from '../../constants/types';
+import pencilIcon from '../../assets/pencil.svg';
+import deleteIcon from '../../assets/delete.svg';
+import { useTaskStore } from '../../store/task.store';
+import DeleteModal from '../DeleteModal.vue';
+import { useCategoryStore } from '../../store/category.store';
 
-const taskStore = useTaskStore()
+const taskStore = useTaskStore();
+const categoryStore = useCategoryStore();
 
-const props = defineProps<{ task: Task; categories?: Category[] }>()
+const props = defineProps<{ task: Task }>();
 
-const deleteModal = ref(false)
+const deleteModal = ref(false);
 
 const onAcceptDelete = () => {
-    taskStore.handleDeleteTask(props.task.id)
-    deleteModal.value = false
-}
+    taskStore.handleDeleteTask(props.task.id);
+    deleteModal.value = false;
+};
 
 const onRejectDelete = () => {
-    deleteModal.value = false
-}
+    deleteModal.value = false;
+};
 
 const category = computed<Category | undefined>(() => {
-    if (!props.task.category || !props.categories) {
-        return undefined
+    if (!props.task.category || !categoryStore.categories) {
+        return undefined;
     } else {
-        const category = props?.categories.find((cate) => {
+        const category = categoryStore.categories.find((cate) => {
             if (cate.id === props.task.category) {
-                return cate
+                return cate;
             }
-        })
-        return category ? category : undefined
+        });
+        return category ? category : undefined;
     }
-})
+});
 </script>
 
 <template>
@@ -79,7 +81,7 @@ const category = computed<Category | undefined>(() => {
                         taskStore.handleUpdateTask(props.task.id, {
                             ...props.task,
                             current_status: 'inactive',
-                        })
+                        });
                     }
                 "
                 class="bg-inactive w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
@@ -93,7 +95,7 @@ const category = computed<Category | undefined>(() => {
                         taskStore.handleUpdateTask(props.task.id, {
                             ...props.task,
                             current_status: 'active',
-                        })
+                        });
                     }
                 "
                 class="bg-active w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
@@ -107,7 +109,7 @@ const category = computed<Category | undefined>(() => {
                         taskStore.handleUpdateTask(props.task.id, {
                             ...props.task,
                             current_status: 'complete',
-                        })
+                        });
                     }
                 "
                 class="bg-complete w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
@@ -121,7 +123,7 @@ const category = computed<Category | undefined>(() => {
                         taskStore.handleUpdateTask(props.task.id, {
                             ...props.task,
                             current_status: 'incomplete',
-                        })
+                        });
                     }
                 "
                 class="bg-incomplete w-full h-8 rounded active:scale-95 hover:brightness-105 transition-all ease-linear duration-[50ms]"
@@ -143,14 +145,13 @@ const category = computed<Category | undefined>(() => {
                 class="bg-red-200 hover:bg-red-300 transition-all duration-100 border rounded size-8 flex items-center justify-center"
                 @click="
                     () => {
-                        deleteModal = true
+                        deleteModal = true;
                     }
                 "
             >
                 <img :src="deleteIcon" alt="pencil icon" class="size-6" />
             </button>
         </div>
-
         <DeleteModal
             title="Delete Task"
             :message="`Are you sure you want to delete this task: ${props.task.name}`"

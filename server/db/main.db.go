@@ -4,17 +4,19 @@ import (
 	"context"
 	"log"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type postgres struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
 var conn *postgres
+var ctx = context.Background()
 
-func Connect(ctx context.Context, connString string) {
-	db, err := pgx.Connect(ctx, connString)
+func Connect(connString string) {
+
+	db, err := pgxpool.New(ctx, connString)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	} else {

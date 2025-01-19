@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const props = defineProps<{
-    show: boolean
-    title: string
-    message: string
-    onAccept: () => void
-    onReject: () => void
-}>()
+    show: boolean;
+    title: string;
+    message: string;
+    onAccept: () => void;
+    onReject: () => void;
+}>();
 </script>
 
 <template>

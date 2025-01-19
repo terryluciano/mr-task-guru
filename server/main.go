@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -30,7 +29,7 @@ func main() {
 
 	db_url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", postgres_user, postgres_password, postgres_host, postgres_port, postgres_db)
 
-	db.Connect(context.Background(), db_url)
+	db.Connect(db_url)
 
 	router := gin.Default()
 

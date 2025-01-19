@@ -35,7 +35,7 @@ func SelectCategory(id int) (*model.Category, error) {
 	switch err := row.Scan(&category.ID, &category.Name, &category.Deleted, &category.Timestamp, &category.Color); err {
 	case sql.ErrNoRows:
 		log.Println(err.Error())
-		return nil, fmt.Errorf("Category does not exist")
+		return nil, fmt.Errorf("category does not exist")
 	case nil:
 		return &category, err
 	default:
@@ -47,11 +47,11 @@ func SelectCategory(id int) (*model.Category, error) {
 
 func SelectAllCategories() ([]model.Category, error) {
 	rows, err := conn.db.Query(context.Background(), `SELECT * FROM categories WHERE deleted = false`)
-	defer rows.Close()
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
 	}
+	defer rows.Close()
 
 	outputRows, rowsErr := pgx.CollectRows(rows, pgx.RowToStructByName[model.Category])
 	if rowsErr != nil {

@@ -18,7 +18,7 @@ func InsertTask(task *model.Task) error {
 		if errors.As(err, &pgErr) {
 			log.Println(pgErr.Message)
 			if pgErr.Code == "23503" {
-				return fmt.Errorf("Category does not exist")
+				return fmt.Errorf("category does not exist")
 			}
 		}
 		return err
@@ -34,7 +34,7 @@ func SelectTask(id int) (*model.Task, error) {
 	switch err := row.Scan(&task.ID, &task.Name, &task.Category, &task.Minutes, &task.Current_status, &task.Deleted, &task.Timestamp); err {
 	case sql.ErrNoRows:
 		log.Println(err.Error())
-		return nil, fmt.Errorf("Task does not exist")
+		return nil, fmt.Errorf("task does not exist")
 	case nil:
 		return &task, err
 	default:
@@ -46,11 +46,12 @@ func SelectTask(id int) (*model.Task, error) {
 
 func SelectAllTasks() ([]model.Task, error) {
 	rows, err := conn.db.Query(context.Background(), `SELECT * FROM tasks WHERE deleted = false`)
-	defer rows.Close()
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
 	}
+	defer rows.Close()
+	
 
 	outputRows, rowsErr := pgx.CollectRows(rows, pgx.RowToStructByName[model.Task])
 	if rowsErr != nil {
@@ -68,7 +69,7 @@ func UpdateTask(id int, task model.Task) error {
 		if errors.As(err, &pgErr) {
 			log.Println(pgErr.Message)
 			if pgErr.Code == "23503" {
-				return fmt.Errorf("Category does not exist")
+				return fmt.Errorf("category does not exist")
 			}
 		}
 		return err

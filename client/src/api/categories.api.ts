@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API } from '.'
+import { API } from './index.api'
 
 export const getAllCategories = async () => {
     try {

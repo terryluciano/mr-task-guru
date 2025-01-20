@@ -2,6 +2,16 @@ import axios from 'axios';
 import { API } from './index.api';
 import type { Task } from '../constants/types';
 
+export const getTask = async (id: number): Promise<Task | null> => {
+    try {
+        const res = await axios.get(`${API}/task/${id}`);
+        return res.data;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
+
 export const getAllTasks = async () => {
     try {
         const res = await axios.get(`${API}/task/all`);

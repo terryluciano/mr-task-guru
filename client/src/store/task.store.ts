@@ -19,6 +19,14 @@ export const useTaskStore = defineStore('task', () => {
     // states
     const tasks = ref<Task[]>([]);
 
+    const tempDeleteTask = ref<{
+        show: boolean;
+        id: number;
+        name: string;
+    } | null>(null);
+
+    const tempEditTask = ref<{ show?: boolean; id?: number } | null>(null);
+
     // getters
     const sortedTasks = computed<SortedTasks>(() => {
         const sorted: SortedTasks = {
@@ -97,13 +105,32 @@ export const useTaskStore = defineStore('task', () => {
         setTasks(res);
     };
 
+    const setTempDeleteTask = (opt: {
+        id?: number;
+        name?: string;
+        reset?: boolean;
+    }) => {
+        if (opt.reset) {
+            tempDeleteTask.value = null;
+            return;
+        }
+        tempDeleteTask.value = {
+            show: true,
+            id: opt.id ?? 0,
+            name: opt.name ?? '',
+        };
+    };
+
     return {
         tasks,
         sortedTasks,
+        tempDeleteTask,
+        tempEditTask,
         setTasks,
-        refetchTasks: fetchTasks,
+        fetchTasks,
         handleDeleteTask,
         handleUpdateTask,
         handleAddTask,
+        setTempDeleteTask,
     };
 });

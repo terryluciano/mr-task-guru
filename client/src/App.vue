@@ -2,13 +2,13 @@
 import { onMounted, ref } from 'vue';
 import NavBar from './components/NavBar.vue';
 import TaskColumn from './components/tasks/TaskColumn.vue';
-import { getAllTasks } from './api/tasks.api';
-import { getAllCategories } from './api/categories.api';
 import { useTaskStore } from './store/task.store';
 import addTaskIcon from './assets/add-task.svg';
 import categoryIcon from './assets/category.svg';
 import { useCategoryStore } from './store/category.store';
 import AddTaskModal from './components/tasks/AddTaskModal.vue';
+import DeleteTaskModal from './components/tasks/DeleteTaskModal.vue';
+import EditTaskModal from './components/tasks/EditTaskModal.vue';
 
 const taskStore = useTaskStore();
 const categoryStore = useCategoryStore();
@@ -16,10 +16,8 @@ const categoryStore = useCategoryStore();
 const showAddTaskModal = ref(false);
 
 onMounted(async () => {
-    taskStore.refetchTasks();
-
-    const categories = await getAllCategories();
-    categoryStore.setCategories(categories);
+    taskStore.fetchTasks();
+    categoryStore.fetchCategories();
 });
 </script>
 
@@ -71,6 +69,8 @@ onMounted(async () => {
             :show="showAddTaskModal"
             @closeAddTaskModel="showAddTaskModal = false"
         />
+        <DeleteTaskModal />
+        <EditTaskModal />
     </div>
 </template>
 

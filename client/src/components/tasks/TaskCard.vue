@@ -1,27 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, watchEffect } from 'vue';
 import type { Category, Task } from '../../constants/types';
 import pencilIcon from '../../assets/pencil.svg';
 import deleteIcon from '../../assets/delete.svg';
 import { useTaskStore } from '../../store/task.store';
-import DeleteModal from '../DeleteModal.vue';
 import { useCategoryStore } from '../../store/category.store';
 
 const taskStore = useTaskStore();
 const categoryStore = useCategoryStore();
 
 const props = defineProps<{ task: Task }>();
-
-const deleteModal = ref(false);
-
-const onAcceptDelete = () => {
-    taskStore.handleDeleteTask(props.task.id);
-    deleteModal.value = false;
-};
-
-const onRejectDelete = () => {
-    deleteModal.value = false;
-};
 
 const category = computed<Category | undefined>(() => {
     if (!props.task.category || !categoryStore.categories) {
@@ -39,10 +27,10 @@ const category = computed<Category | undefined>(() => {
 
 <template>
     <div
-        class="flex flex-col gap-2 w-full h-auto border rounded-[4px] overflow-hidden p-2 font-Roboto group relative"
+        class="flex flex-col gap-2 w-full h-auto border-2 border-black/15 rounded-[4px] overflow-hidden p-2 font-Roboto group relative shadow-sm"
     >
         <!-- Title -->
-        <p class="text-lg leading-none mb-2">
+        <p class="text-lg font-medium leading-none mb-2">
             {{ task.name }}
         </p>
 
@@ -139,25 +127,32 @@ const category = computed<Category | undefined>(() => {
             <button
                 class="bg-slate-200 hover:bg-slate-300 transition-all duration-100 border rounded size-8 flex items-center justify-center"
             >
-                <img :src="pencilIcon" alt="pencil icon" class="size-6" />
+                <img
+                    :src="pencilIcon"
+                    alt="pencil icon"
+                    class="size-6"
+                    @click="
+                        () =>
+                            (taskStore.tempEditTask = {
+                                show: true,
+                                id: props.task.id,
+                            })
+                    "
+                />
             </button>
             <button
                 class="bg-red-200 hover:bg-red-300 transition-all duration-100 border rounded size-8 flex items-center justify-center"
                 @click="
                     () => {
-                        deleteModal = true;
+                        taskStore.setTempDeleteTask({
+                            id: props.task.id,
+                            name: props.task.name,
+                        });
                     }
                 "
             >
                 <img :src="deleteIcon" alt="pencil icon" class="size-6" />
             </button>
         </div>
-        <DeleteModal
-            title="Delete Task"
-            :message="`Are you sure you want to delete this task: ${props.task.name}`"
-            :show="deleteModal"
-            @accept="onAcceptDelete"
-            @reject="onRejectDelete"
-        />
     </div>
 </template>

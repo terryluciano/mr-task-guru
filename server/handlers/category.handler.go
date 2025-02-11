@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/terryluciano/mr-task-guru/server/db"
+	db "github.com/terryluciano/mr-task-guru/server/services"
 	"github.com/terryluciano/mr-task-guru/server/utils"
 )
 

@@ -36,15 +36,16 @@ const category = computed<Category | undefined>(() => {
 
         <!-- Minutes -->
         <p class="text-sm leading-none">Estimate: {{ task.minutes }} Minutes</p>
+
         <!-- Category -->
         <div
             v-show="props.task.category && category?.name"
-            class="text-sm py-0.5 px-2 w-fit rounded-full leading-none"
+            class="text-sm py-1 px-2.5 w-fit rounded-full leading-none flex-center"
             :style="{
                 backgroundColor: category?.color ?? '#CBD5E0',
             }"
         >
-            <p>
+            <p class="leading-none font-FunnelSans font-medium text-sm">
                 {{ category?.name }}
             </p>
         </div>

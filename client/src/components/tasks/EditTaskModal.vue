@@ -40,7 +40,6 @@ const editTask = async () => {
 
 const fetchTask = async (id: number) => {
     const res = await getTask(id);
-    console.log(res);
     if (res) {
         fetchedTask.value = res;
         taskName.value = res.name;
@@ -54,7 +53,6 @@ watch(
     () => taskStore.tempEditTask,
     (newVal) => {
         if (newVal?.id) {
-            console.log(newVal.id);
             fetchTask(newVal?.id);
         }
     }

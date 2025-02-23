@@ -9,11 +9,13 @@ import { useCategoryStore } from './store/category.store';
 import AddTaskModal from './components/tasks/AddTaskModal.vue';
 import DeleteTaskModal from './components/tasks/DeleteTaskModal.vue';
 import EditTaskModal from './components/tasks/EditTaskModal.vue';
+import AddCategoryModal from './components/categories/AddCategoryModal.vue';
 
 const taskStore = useTaskStore();
 const categoryStore = useCategoryStore();
 
 const showAddTaskModal = ref(false);
+const showAddCategoryModal = ref(false);
 
 onMounted(async () => {
     taskStore.fetchTasks();
@@ -37,6 +39,7 @@ onMounted(async () => {
                 </button>
                 <button
                     class="h-10 rounded-full border-2 border-black px-4 flex flex-row items-center justify-center gap-1 bg-complete/25 hover:bg-complete/40 transition-all ease-linear duration-[50ms] active:scale-[0.975]"
+                    @click="showAddCategoryModal = true"
                 >
                     <img :src="categoryIcon" alt="" class="size-5" />
                     <p>Add Category</p>
@@ -68,6 +71,10 @@ onMounted(async () => {
         <AddTaskModal
             :show="showAddTaskModal"
             @closeAddTaskModel="showAddTaskModal = false"
+        />
+        <AddCategoryModal
+            :show="showAddCategoryModal"
+            @closeAddCategoryModel="showAddCategoryModal = false"
         />
         <DeleteTaskModal />
         <EditTaskModal />
@@ -110,5 +117,11 @@ body {
 .slide-up-enter-to,
 .slide-up-leave-from {
     transform: translateY(0%);
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

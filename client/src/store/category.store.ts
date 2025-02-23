@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { Category } from '../constants/types';
-import { getAllCategories } from '../api/categories.api';
+import { getAllCategories, postAddCategory } from '../api/categories.api';
 
 export const useCategoryStore = defineStore('category', () => {
     // states
@@ -17,9 +17,26 @@ export const useCategoryStore = defineStore('category', () => {
         setCategories(res);
     };
 
+    const handleAddCategory = async (
+        category: Omit<Category, 'id' | 'deleted' | 'timestamp'>
+    ): Promise<boolean> => {
+        try {
+            const res = await postAddCategory(category);
+            if (res) {
+                categories.value.push(res);
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    };
+
     return {
         categories,
         setCategories,
         fetchCategories,
+        handleAddCategory,
     };
 });
